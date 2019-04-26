@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--客户映射 指定到dao接口 -->
+<mapper namespace="com.deepexi.a.mapper.ComponentMapper">
+    <!--id与dao接口的方法名一直，指定结果类型，和参数类型 -->
+    <select id="selectPageVo" resultType="com.deepexi.a.domain.eo.Component">
+        SELECT id,module_name,module_type,module_status,module_version
+        FROM component
+        <where>
+            <if test="moduleName!='' and moduleName!=null">
+                and module_name like concat(#{moduleName},'%')
+            </if>
+            <if test="moduleType!='' and moduleType!=null">
+                and module_type=#{moduleType}
+            </if>
+            <if test="moduleStatus!='' and moduleStatus!=null">
+                and module_status=#{moduleStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="getComponentById" parameterType="java.lang.Integer" resultType="com.deepexi.a.domain.eo.Component">
+        SELECT id,module_name,module_type,module_status,module_version
+        FROM component WHERE id=#{id}
+    </select>
+    
+    <insert id="insert" parameterType="com.deepexi.a.domain.eo.Component">
+        INSERT INTO component (module_name,module_type,module_version,module_status)
+        VALUES (#{moduleName},#{moduleType},#{moduleVersion},#{moduleStatus})
+    </insert>
+
+    <update id="updateById" parameterType="com.deepexi.a.domain.eo.Component">
+        UPDATE component
+        <set>
+            <if test="moduleName!='' and moduleName!=null">
+                module_name=#{moduleName},
+            </if>
+            <if test="moduleType!='' and moduleType!=null">
+                module_type=#{moduleType},
+            </if>
+            <if test="moduleVersion!='' and moduleVersion!=null">
+                module_version=#{moduleVersion},
+            </if>
+            <if test="moduleStatus!='' and moduleStatus!=null">
+                module_status=#{moduleStatus},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteBatchIds" parameterType="hashmap">
+        delete from component where id in
+        <foreach collection="ids" item="id" open="(" close=")"
+                 separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
